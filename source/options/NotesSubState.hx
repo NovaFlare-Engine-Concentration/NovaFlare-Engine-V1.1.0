@@ -184,7 +184,7 @@ class NotesSubState extends MusicBeatSubstate
 		underline_text_BG.alpha = 0.6;
 		add(underline_text_BG);
 		
-		#if android
+		#if mobile
 		addVirtualPad(CHART_EDITOR, NOTESTATE);
 		#end
 	}
@@ -206,10 +206,10 @@ class NotesSubState extends MusicBeatSubstate
 	
 	    LengthCheck = AndroidColorGet.text;
 	
-		if (FlxG.keys.justPressed.ESCAPE  #if android || MusicBeatSubstate._virtualpad.buttonB.justPressed #end ) {
+		if (FlxG.keys.justPressed.ESCAPE  #if mobile || MusicBeatSubstate._virtualpad.buttonB.justPressed #end ) {
 			FlxG.mouse.visible = false;
 			//FlxG.sound.play(Paths.sound('cancelMenu'));
-			#if android
+			#if mobile
 				FlxTransitionableState.skipNextTransOut = true;
 				FlxG.resetState();
 				#else
@@ -222,7 +222,7 @@ class NotesSubState extends MusicBeatSubstate
 
 		// Early controller checking
 		if(FlxG.gamepads.anyJustPressed(ANY)) controls.controllerMode = true;
-		else if(FlxG.mouse.justPressed || FlxG.mouse.deltaScreenX != 0 || FlxG.mouse.deltaScreenY != 0) controls.controllerMode = false;
+		else if(FlxG.mouse.justPressed || FlxG.mouse.deltaViewX != 0 || FlxG.mouse.deltaViewY != 0) controls.controllerMode = false;
 		//
 		
 		var changedToController:Bool = false;
@@ -516,9 +516,9 @@ class NotesSubState extends MusicBeatSubstate
 				}
 			} 
 		}
-		else if(controls.RESET #if android || MusicBeatSubstate._virtualpad.buttonC.justPressed || MusicBeatSubstate._virtualpad.buttonE.justPressed #end && hexTypeNum < 0)
+		else if(controls.RESET #if mobile || MusicBeatSubstate._virtualpad.buttonC.justPressed || MusicBeatSubstate._virtualpad.buttonE.justPressed #end && hexTypeNum < 0)
 		{
-			if(FlxG.keys.pressed.SHIFT || FlxG.gamepads.anyJustPressed(LEFT_SHOULDER) #if android || MusicBeatSubstate._virtualpad.buttonE.justPressed #end)
+			if(FlxG.keys.pressed.SHIFT || FlxG.gamepads.anyJustPressed(LEFT_SHOULDER) #if mobile || MusicBeatSubstate._virtualpad.buttonE.justPressed #end)
 			{
 				for (i in 0...3)
 				{
@@ -561,7 +561,7 @@ class NotesSubState extends MusicBeatSubstate
 	}
 	function pointerFlxPoint():FlxPoint
 	{
-		if (!controls.controllerMode) return FlxG.mouse.getScreenPosition();
+		if (!controls.controllerMode) return FlxG.mouse.getViewPosition();
 		return controllerPointer.getScreenPosition();
 	}
 

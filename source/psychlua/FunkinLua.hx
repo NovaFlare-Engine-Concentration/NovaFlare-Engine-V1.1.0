@@ -804,8 +804,6 @@ class FunkinLua {
 				MusicBeatState.switchState(new StoryMenuState());
 			else
 				MusicBeatState.switchState(new FreeplayState());
-			
-			#if desktop DiscordClient.resetClientID(); #end
 
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			PlayState.changedDifficulty = false;
@@ -888,11 +886,11 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "getMouseX", function(camera:String) {
 			var cam:FlxCamera = LuaUtils.cameraFromString(camera);
-			return FlxG.mouse.getScreenPosition(cam).x;
+			return FlxG.mouse.getViewPosition(cam).x;
 		});
 		Lua_helper.add_callback(lua, "getMouseY", function(camera:String) {
 			var cam:FlxCamera = LuaUtils.cameraFromString(camera);
-			return FlxG.mouse.getScreenPosition(cam).y;
+			return FlxG.mouse.getViewPosition(cam).y;
 		});
 
 		Lua_helper.add_callback(lua, "getMidpointX", function(variable:String) {
@@ -1591,7 +1589,7 @@ class FunkinLua {
 		#if HSCRIPT_ALLOWED
 		if(hscript != null)
 		{
-			hscript.kill();
+			hscript.destroy();
 			hscript = null;
 		}
 		#end

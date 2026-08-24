@@ -17,32 +17,32 @@ class OptionsState extends MusicBeatState
 	function openSelectedSubstate(label:String) {
 		switch(label) {
 			case 'Note Colors':
-			    #if android
+			    #if mobile
 				removeVirtualPad();
 				#end
 				openSubState(new options.NotesSubState());
 			case 'Controls':
-			    #if android
+			    #if mobile
 				removeVirtualPad();
 				#end
 				openSubState(new options.ControlsSubState());
 			case 'Graphics':
-			    #if android
+			    #if mobile
 				removeVirtualPad();
 				#end
 				openSubState(new options.GraphicsSettingsSubState());
 			case 'Visuals and UI':
-			    #if android
+			    #if mobile
 				removeVirtualPad();
 				#end
 				openSubState(new options.VisualsUISubState());
 			case 'Gameplay':
-			    #if android
+			    #if mobile
 				removeVirtualPad();
 				#end
 				openSubState(new options.GameplaySettingsSubState());
 			case 'Adjust Delay and Combo':
-			    #if android
+			    #if mobile
 				removeVirtualPad();
 				#end
 				MusicBeatState.switchState(new options.NoteOffsetState());
@@ -67,7 +67,7 @@ class OptionsState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);				
 		
-		#if android
+		#if mobile
 		tipText = new FlxText(150, FlxG.height - 24, 0, 'Press X to Go In Android Controls Menu', 16);
 			tipText.setFormat("VCR OSD Mono", 17, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			tipText.borderSize = 1.25;
@@ -101,7 +101,7 @@ class OptionsState extends MusicBeatState
 		changeSelection();
 		ClientPrefs.saveSettings();
         
-        #if android
+        #if mobile
 		addVirtualPad(UP_DOWN, A_B_X_Y);
 		#end
         
@@ -123,7 +123,7 @@ class OptionsState extends MusicBeatState
 			changeSelection(1);
 		}		
 		
-		#if android
+		#if mobile
 		if (MusicBeatState._virtualpad.buttonX.justPressed) {
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;

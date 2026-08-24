@@ -92,7 +92,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			updateTextFrom(optionsArray[i]);
 		}
 		
-		        #if android
+		        #if mobile
                 addVirtualPad(FULL, A_B_C);
                 #end
 
@@ -120,7 +120,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		if (controls.BACK) {
-			#if android
+			#if mobile
 			FlxTransitionableState.skipNextTransOut = true;
 			FlxG.resetState();
 			ClientPrefs.saveSettings();
@@ -221,7 +221,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 			}
 
-			if(controls.RESET #if android || MusicBeatSubstate._virtualpad.buttonC.justPressed #end)
+			if(controls.RESET #if mobile || MusicBeatSubstate._virtualpad.buttonC.justPressed #end)
 			{
 				for (i in 0...optionsArray.length)
 				{

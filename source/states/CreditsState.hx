@@ -63,7 +63,7 @@ class CreditsState extends MusicBeatState
 		    ['beihu',		'beihu',		'Main Programmer\nAndroid Porter',							beihuLink,	'FFC0CB'],
 		    ['qwq',		'qwq',		'Windows build helper',				'https://b23.tv/VIWVK0s',	'FF6600'],
 		    [''],
-		    #if android
+		    #if mobile
 		    ['Psych Engine Android Team'],
 		    ['beihu',		'beihu',		'Main Android Porter\nport owner',							beihuLink,	'FFC0CB'],
 			['yanqiang',     'yanqiang',	    'Android Porter\nBug fix',							yanqiangLink,	'7192FD'],
@@ -149,7 +149,7 @@ class CreditsState extends MusicBeatState
 		bg.color = CoolUtil.colorFromString(creditsStuff[curSelected][4]);
 		intendedColor = bg.color;
 		changeSelection();
-		#if android
+		#if mobile
                 addVirtualPad(UP_DOWN, A_B_C);
                 #end
 		super.create();
@@ -169,7 +169,7 @@ class CreditsState extends MusicBeatState
 			if(creditsStuff.length > 1)
 			{
 				var shiftMult:Int = 1;
-				if(FlxG.keys.pressed.SHIFT  #if android || MusicBeatState._virtualpad.buttonC.pressed #end) shiftMult = 3;
+				if(FlxG.keys.pressed.SHIFT  #if mobile || MusicBeatState._virtualpad.buttonC.pressed #end) shiftMult = 3;
 
 				var upP = controls.UI_UP_P;
 				var downP = controls.UI_DOWN_P;

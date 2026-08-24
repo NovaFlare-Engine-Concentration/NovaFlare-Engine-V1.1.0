@@ -33,7 +33,7 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
-#if android
+#if mobile
 import android.flixel.FlxButton;
 #else
 import flixel.ui.FlxButton;
@@ -148,7 +148,7 @@ class OSTSubstate extends MusicBeatSubstate
 		
 		if ( Math.floor(SoundTime/BeatTime + 0.5) % 4  == 2) canBeat = true;   
 		
-		if(FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end)
+		if(FlxG.keys.justPressed.ESCAPE #if android|| FlxG.android.justReleased.BACK #end)
 		{
 		    FlxG.sound.music.volume = 0;
 		    destroyVocals();
@@ -156,7 +156,7 @@ class OSTSubstate extends MusicBeatSubstate
 		    FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 			FlxG.sound.music.fadeIn(4, 0, 0.7);		
 		    
-			#if android
+			#if mobile
 			FlxTransitionableState.skipNextTransOut = true;
 			FlxG.resetState();
 			#else

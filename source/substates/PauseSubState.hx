@@ -18,7 +18,7 @@ class PauseSubState extends MusicBeatSubstate
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty'  #if android, 'Chart Editor' #end, 'Options', 'Game Setting', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty'  #if mobile, 'Chart Editor' #end, 'Options', 'Game Setting', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 
@@ -142,7 +142,7 @@ class PauseSubState extends MusicBeatSubstate
 		regenMenu();
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 		
-		#if android
+		#if mobile
 		if (PlayState.chartingMode)
 		{
 		        addVirtualPad(FULL, A);
@@ -313,10 +313,9 @@ class PauseSubState extends MusicBeatSubstate
 					OptionsState.onPlayState = true;
 				case 'Game Setting':
 					PlayState.instance.paused = true; // For lua
-					MusicBeatState.switchState(new GameplayChangersSubstate());
-					GameplayChangersSubstate.onPlayState = true;
+					MusicBeatState.switchState(new GameplayChangersState());
+					GameplayChangersState.onPlayState = true;
 				case "Exit to menu":
-					#if desktop DiscordClient.resetClientID(); #end
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
 

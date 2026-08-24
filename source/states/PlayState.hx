@@ -164,6 +164,7 @@ class PlayState extends MusicBeatState
 	public var eventNotes:Array<EventNote> = [];
 
 	public var camFollow:FlxObject;
+	public var camFollowPos:FlxObject;
 	private static var prevCamFollow:FlxObject;
 
 	public var strumLineNotes:FlxTypedGroup<StrumNote>;
@@ -342,7 +343,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 		CustomFadeTransition.nextCamera = camOther;
 		
-		#if android
+		#if mobile
 		addAndroidControls();
 		MusicBeatState.androidc.visible = true;
 		MusicBeatState.androidc.alpha = 0.000001;
@@ -585,6 +586,9 @@ class PlayState extends MusicBeatState
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollow.setPosition(camPos.x, camPos.y);
+
+		camFollowPos = new FlxObject(0, 0, 1, 1);
+		add(camFollowPos); 
 		camPos.put();
 				
 		if (prevCamFollow != null)
@@ -594,9 +598,9 @@ class PlayState extends MusicBeatState
 		}
 		add(camFollow);
 
-		FlxG.camera.follow(camFollow, LOCKON, 0);
+		FlxG.camera.follow(camFollowPos, LOCKON, 1);
+		FlxG.camera.focusOn(camFollow.getPosition());
 		FlxG.camera.zoom = defaultCamZoom;
-		FlxG.camera.snapToTarget();
 
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCameraSection();
@@ -680,7 +684,7 @@ class PlayState extends MusicBeatState
 		
 		if (startTimer != null){
 		    if(startTimer.finished){
-		    #if android
+		    #if mobile
     		    MusicBeatState.androidc.visible = true;
     			if (MusicBeatState.checkHitbox != true) MusicBeatState.androidc.alpha = 1;
     		    #end		
@@ -1041,7 +1045,7 @@ class PlayState extends MusicBeatState
 			}
 			else if (skipCountdown)
 			{
-			    #if android
+			    #if mobile
 			    MusicBeatState.androidc.visible = true;
 			    if (MusicBeatState.checkHitbox != true) MusicBeatState.androidc.alpha = 1;
 		        #end
@@ -1075,7 +1079,7 @@ class PlayState extends MusicBeatState
 				{
 					case 0:
 					if (!skipCountdown){
-					    #if android
+					    #if mobile
 			            MusicBeatState.androidc.visible = true;
 			            if (MusicBeatState.checkHitbox != true) MusicBeatState.androidc.alpha = 1;
 		                #end
@@ -1641,7 +1645,7 @@ class PlayState extends MusicBeatState
 			resetRPC(startTimer != null && startTimer.finished);
 		}
 		
-		#if android
+		#if mobile
 			MusicBeatState.androidc.y = 0;
 			//MusicBeatState.androidc.visible = true;
 			#end
@@ -1705,10 +1709,12 @@ class PlayState extends MusicBeatState
 		}*/
 		callOnScripts('onUpdate', [elapsed]);
 
-		FlxG.camera.followLerp = 0;
 		if(!inCutscene && !paused) {
-			FlxG.camera.followLerp = FlxMath.bound(elapsed * 2.4 * cameraSpeed * playbackRate / (FlxG.updateFramerate / 60), 0, 1);
-			#if ACHIEVEMENTS_ALLOWED
+			var lerpVal:Float = FlxMath.bound(elapsed * 2.4 * cameraSpeed * playbackRate, 0, 1);
+			camFollowPos.setPosition(
+				FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal),
+				FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal)
+			);
 			if(!startingSong && !endingSong && boyfriend.animation.curAnim != null && boyfriend.animation.curAnim.name.startsWith('idle')) {
 				boyfriendIdleTime += elapsed;
 				if(boyfriendIdleTime >= 0.15) { // Kind of a mercy thing for making the achievement easier to get as it's apparently frustrating to some playerss
@@ -1717,7 +1723,6 @@ class PlayState extends MusicBeatState
 			} else {
 				boyfriendIdleTime = 0;
 			}
-			#end
 		}
 
 		super.update(elapsed);
@@ -1730,7 +1735,7 @@ class PlayState extends MusicBeatState
 			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
 		}
 
-		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
+		if (controls.PAUSE #if android|| FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
 		{
 			var ret:Dynamic = callOnScripts('onPause', null, true);
 			if(ret != FunkinLua.Function_Stop) {
@@ -1960,7 +1965,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.pause();
 			vocals.pause();
 		}
-		#if android
+		#if mobile
 			MusicBeatState.androidc.y = 720;
 			//MusicBeatState.androidc.visible = true;
 		#end
@@ -1992,7 +1997,6 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		DiscordClient.changePresence("Chart Editor", null, null, true);
-		DiscordClient.resetClientID();
 		#end
 		
 		MusicBeatState.switchState(new ChartingState());
@@ -2004,7 +2008,6 @@ class PlayState extends MusicBeatState
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
-		#if desktop DiscordClient.resetClientID(); #end
 		MusicBeatState.switchState(new CharacterEditorState(SONG.player2));
 	}
 
@@ -2398,7 +2401,7 @@ class PlayState extends MusicBeatState
 				return false;
 			}
 		}
-        #if android
+        #if mobile
 		MusicBeatState.androidc.alpha = 0.00001;
 		#end
 		timeBar.visible = false;
@@ -2453,14 +2456,13 @@ class PlayState extends MusicBeatState
 				{
 					Mods.loadTopMod();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-					#if desktop DiscordClient.resetClientID(); #end
 
 					cancelMusicFadeTween();
 					if(FlxTransitionableState.skipNextTransIn) {
 						CustomFadeTransition.nextCamera = null;
 					}
 					
-					#if android		
+					#if mobile		
                 		MusicBeatState.androidc.visible = false;				
             		#end
             		
@@ -2492,7 +2494,7 @@ class PlayState extends MusicBeatState
 
 					cancelMusicFadeTween();
 					
-					#if android		
+					#if mobile		
                 		MusicBeatState.androidc.visible = false;				
             		#end
             		
@@ -2503,14 +2505,13 @@ class PlayState extends MusicBeatState
 			{
 				trace('WENT BACK TO FREEPLAY??');
 				Mods.loadTopMod();
-				#if desktop DiscordClient.resetClientID(); #end
 
 				cancelMusicFadeTween();
 				if(FlxTransitionableState.skipNextTransIn) {
 					CustomFadeTransition.nextCamera = null;
 				}
 				
-				#if android		
+				#if mobile		
                 		MusicBeatState.androidc.visible = false;				
             	#end
 				
@@ -3389,7 +3390,7 @@ class PlayState extends MusicBeatState
 			if(script != null)
 			{
 				script.call('onDestroy');
-				script.kill();
+				script.destroy();
 			}
 
 		while (hscriptArray.length > 0)
@@ -3547,7 +3548,7 @@ class PlayState extends MusicBeatState
 			if(newScript.parsingException != null)
 			{
 				addTextToDebug('ERROR ON LOADING: ${newScript.parsingException.message}', FlxColor.RED);
-				newScript.kill();
+				newScript.destroy();
 				return;
 			}
 
@@ -3561,7 +3562,7 @@ class PlayState extends MusicBeatState
 						if (e != null)
 							addTextToDebug('ERROR ($file: onCreate) - ${e.message.substr(0, e.message.indexOf('\n'))}', FlxColor.RED);
 
-					newScript.kill();
+					newScript.destroy();
 					hscriptArray.remove(newScript);
 					trace('failed to initialize tea interp!!! ($file)');
 				}
@@ -3575,7 +3576,7 @@ class PlayState extends MusicBeatState
 			var newScript:HScript = cast (SScript.global.get(file), HScript);
 			if(newScript != null)
 			{
-				newScript.kill();
+				newScript.destroy();
 				hscriptArray.remove(newScript);
 			}
 		}
@@ -3853,7 +3854,7 @@ class PlayState extends MusicBeatState
 	}
 
 
-        #if android
+        #if mobile
 	public function initLuaShader(name:String, ?glslVersion:Int = 100)
         #else
         public function initLuaShader(name:String, ?glslVersion:Int = 120)

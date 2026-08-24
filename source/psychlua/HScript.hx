@@ -293,12 +293,12 @@ class HScript extends SScript
 		#end
 	}
 
-	override public function kill()
+	override public function destroy()
 	{
 		origin = null;
 		parentLua = null;
 
-		super.kill();
+		super.destroy();
 	}
 }
 

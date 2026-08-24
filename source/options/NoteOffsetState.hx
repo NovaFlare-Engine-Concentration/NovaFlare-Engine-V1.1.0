@@ -172,7 +172,7 @@ class NoteOffsetState extends MusicBeatState
 
 		super.create();
 		
-		#if android
+		#if mobile
 		addVirtualPad(FULL, A_B_C);
 		addPadCamera();
 		#end
@@ -208,7 +208,7 @@ class NoteOffsetState extends MusicBeatState
 			// changed to controller mid state
 			if(controls.controllerMode)
 			{
-				var mousePos = FlxG.mouse.getScreenPosition(camHUD);
+				var mousePos = FlxG.mouse.getViewPosition(camHUD);
 				controllerPointer.x = mousePos.x;
 				controllerPointer.y = mousePos.y;
 			}
@@ -308,7 +308,7 @@ class NoteOffsetState extends MusicBeatState
 			{
 				holdingObjectType = null;
 				if(!controls.controllerMode)
-					FlxG.mouse.getScreenPosition(camHUD, startMousePos);
+					FlxG.mouse.getViewPosition(camHUD, startMousePos);
 				else
 					controllerPointer.getScreenPosition(startMousePos, camHUD);
 
@@ -340,7 +340,7 @@ class NoteOffsetState extends MusicBeatState
 				{
 					var mousePos:FlxPoint = null;
 					if(!controls.controllerMode)
-						mousePos = FlxG.mouse.getScreenPosition(camHUD);
+						mousePos = FlxG.mouse.getViewPosition(camHUD);
 					else
 						mousePos = controllerPointer.getScreenPosition(camHUD);
 
@@ -351,7 +351,7 @@ class NoteOffsetState extends MusicBeatState
 				}
 			}
 
-			if(controls.RESET #if android || MusicBeatState._virtualpad.buttonC.justPressed #end)
+			if(controls.RESET #if mobile || MusicBeatState._virtualpad.buttonC.justPressed #end)
 			{
 				for (i in 0...ClientPrefs.data.comboOffset.length)
 				{
@@ -389,7 +389,7 @@ class NoteOffsetState extends MusicBeatState
 				updateNoteDelay();
 			}
 
-			if(controls.RESET #if android || MusicBeatState._virtualpad.buttonC.justPressed #end)
+			if(controls.RESET #if mobile || MusicBeatState._virtualpad.buttonC.justPressed #end)
 			{
 				holdTime = 0;
 				barPercent = 0;

@@ -115,7 +115,7 @@ class OSTtoNew extends MusicBeatSubstate
 	    }
 	    scoreText.text += '\n';
 	    
-	    if(FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end)
+	    if(FlxG.keys.justPressed.ESCAPE #if android|| FlxG.android.justReleased.BACK #end)
 		{
 		    FlxG.sound.music.volume = 0;
 		    destroyVocals();
@@ -123,7 +123,7 @@ class OSTtoNew extends MusicBeatSubstate
 		    FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 			FlxG.sound.music.fadeIn(4, 0, 0.7);		
 		    
-			#if android
+			#if mobile
 			FlxTransitionableState.skipNextTransOut = true;
 			FlxG.resetState();
 			#else

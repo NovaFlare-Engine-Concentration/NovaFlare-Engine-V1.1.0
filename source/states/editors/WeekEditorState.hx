@@ -447,7 +447,7 @@ class WeekEditorState extends MusicBeatState
 
 		if(!blockInput) {
 			ClientPrefs.toggleVolumeKeys(true);
-			if(FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end) {
+			if(FlxG.keys.justPressed.ESCAPE #if android|| FlxG.android.justReleased.BACK #end) {
 				MusicBeatState.switchState(new MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}
@@ -539,7 +539,7 @@ class WeekEditorState extends MusicBeatState
 		var data:String = haxe.Json.stringify(weekFile, "\t");
 		if (data.length > 0)
 		{
-			#if android
+			#if mobile
 			SUtil.saveContent(weekFileName, ".json", data);
 			#else
 			_file = new FileReference();
@@ -634,7 +634,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 
 		addEditorBox();
 		changeSelection();
-		#if android
+		#if mobile
 		addVirtualPad(UP_DOWN, NONE);
 		#end
 		super.create();
@@ -816,7 +816,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 			}
 		} else {
 			ClientPrefs.toggleVolumeKeys(true);
-			if(FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end) {
+			if(FlxG.keys.justPressed.ESCAPE #if android|| FlxG.android.justReleased.BACK #end) {
 				MusicBeatState.switchState(new MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}

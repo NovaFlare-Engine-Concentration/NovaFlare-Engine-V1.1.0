@@ -140,7 +140,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		changeSelection();
 		reloadCheckboxes();
 		
-		#if android
+		#if mobile
 		addVirtualPad(FULL, A_B_C);
 		addPadCamera();
 		#end
@@ -161,14 +161,15 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		}
 
 		if (controls.BACK) {
-			#if android
-			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-			#else
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-			close();
-			#end
 			ClientPrefs.saveSettings();
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+
+			if (onPlayState)
+			{
+				MusicBeatState.switchState(new states.PlayState());
+			}else{
+				close();
+			}
 			
 		}
 
@@ -280,7 +281,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 				}
 			}
 
-			if(controls.RESET #if android || MusicBeatSubstate._virtualpad.buttonC.justPressed #end)
+			if(controls.RESET #if mobile || MusicBeatSubstate._virtualpad.buttonC.justPressed #end)
 			{
 				for (i in 0...optionsArray.length)
 				{

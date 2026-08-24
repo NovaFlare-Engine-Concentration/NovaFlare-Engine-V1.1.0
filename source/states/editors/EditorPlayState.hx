@@ -144,20 +144,20 @@ class EditorPlayState extends MusicBeatSubstate
 		#end
 		RecalculateRating();
 		
-		#if android
+		#if mobile
 		addAndroidControls();
 		#end
 
-		#if android
+		#if mobile
 		MusicBeatSubstate.androidc.visible = true;
 		#end
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end)
+		if (FlxG.keys.justPressed.ESCAPE #if android|| FlxG.android.justReleased.BACK #end)
 		{		
-		    #if android
+		    #if mobile
 			MusicBeatSubstate.androidc.visible = false;
 			#end
 			

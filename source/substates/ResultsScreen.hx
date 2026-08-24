@@ -300,7 +300,7 @@ class ResultsScreen extends MusicBeatSubstate
 		add(setMsText);		
 		
 		var backTextShow:String = 'Press Space to continue';
-		#if android backTextShow = 'Press Back to continue'; #end
+		#if mobile backTextShow = 'Press Back to continue'; #end
 		backText = new FlxText(0, FlxG.height - 45, 0, backTextShow);
 		backText.size = 28;
 		backText.font = Paths.font('vcr.ttf');
@@ -383,7 +383,7 @@ class ResultsScreen extends MusicBeatSubstate
 		+ '\n';
 		
 	
-		if(FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end)
+		if(FlxG.keys.justPressed.ESCAPE #if android|| FlxG.android.justReleased.BACK #end)
 		{
 		    MusicBeatState.switchState(new FreeplayState());
 		}

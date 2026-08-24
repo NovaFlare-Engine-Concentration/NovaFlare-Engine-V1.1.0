@@ -53,9 +53,35 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		option.minValue = 60;
-		option.maxValue = 290;
+		option.maxValue = 240;
 		option.displayFormat = '%v FPS';
 		option.onChange = onChangeFramerate;
+		#end
+
+		var option:Option = new Option('Draw Framerate',
+			'Maximum rendering framerate.\nSet this to match your monitor refresh rate for smoother visuals.',
+			'drawFramerate',
+			'int');
+		addOption(option);
+		option.minValue = 30;
+		option.maxValue = 360;
+		option.displayFormat = '%v FPS';
+		option.onChange = onChangeDrawFramerate;
+	
+		var option:Option = new Option('Lock Render',
+			'If checked, limits rendering to Draw Framerate.\nTurn OFF for maximum FPS (may cause screen tearing).',
+			'lockRender',
+			'bool');
+		option.onChange = onChangeLockRender;
+		addOption(option);
+
+		#if sys
+		var option:Option = new Option('Render Thread',
+			'If checked, enables multithreaded rendering.\nCan improve performance on multi-core CPUs.',
+			'renderThread',
+			'bool');
+		option.onChange = onChangeRenderThread;
+		addOption(option);
 		#end
 
 		super();
@@ -75,16 +101,36 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 
 	function onChangeFramerate()
 	{
-		if(ClientPrefs.data.framerate > FlxG.drawFramerate)
-		{
-			FlxG.updateFramerate = ClientPrefs.data.framerate;
-			FlxG.drawFramerate = ClientPrefs.data.framerate;
+		FlxG.updateFramerate = ClientPrefs.data.framerate;
+		if (FlxG.updateFramerate < FlxG.drawFramerate) {
+			FlxG.updateFramerate = FlxG.drawFramerate;
 		}
-		else
-		{
-			FlxG.drawFramerate = ClientPrefs.data.framerate;
-			FlxG.updateFramerate = ClientPrefs.data.framerate;
+	}
+
+	function onChangeDrawFramerate()
+	{
+		FlxG.drawFramerate = ClientPrefs.data.drawFramerate;
+		#if sys
+		FlxG.stage.application.window.lockRender = ClientPrefs.data.lockRender;
+		#end
+
+		if (FlxG.drawFramerate > FlxG.updateFramerate) {
+			FlxG.updateFramerate = FlxG.drawFramerate;
 		}
+	}
+
+	function onChangeLockRender()
+	{
+		#if sys
+		FlxG.stage.application.window.lockRender = ClientPrefs.data.lockRender;
+		#end
+	}
+
+	function onChangeRenderThread()
+	{
+		#if sys
+		lime.graphics.opengl.GL.setMultiThreaded(ClientPrefs.data.renderThread);
+		#end
 	}
 
 	override function changeSelection(change:Int = 0)

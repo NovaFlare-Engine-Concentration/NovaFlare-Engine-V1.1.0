@@ -1,16 +1,16 @@
 package flixel.addons.ui;
 
+#if !macro
 import flash.geom.Rectangle;
+#end
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
-
-#if android
-import android.flixel.FlxButton;
-#else
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.math.FlxMath;
 import flixel.ui.FlxButton;
-#end
-
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxStringUtil;
 import flixel.addons.ui.FlxUIGroup;
@@ -22,16 +22,16 @@ import flixel.addons.ui.FlxUIAssets;
 import flixel.addons.ui.StrNameLabel;
 import flixel.addons.ui.FlxUI;
 
+import flixel.input.actions.FlxActionInput;
+import android.AndroidControls.AndroidControls;
+import android.FlxVirtualPad;
 
 /*
-
 THIS IS AN EDIT OF FlxUIDropDownMenu I'VE MADE BECAUSE I'M TIRED OF IT NOT SUPPORTING SCROLLING UP/DOWN
 BAH!
-
 The differences are the following:
 * Support to scrolling up/down with mouse wheel or arrow keys
 * THe default drop direction is "Down" instead of "Automatic"
-
 */
 
 
@@ -41,6 +41,12 @@ The differences are the following:
  */
 class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {
+    
+	function getVirtualPad():FlxVirtualPad {
+	for (th in FlxG.state) if (th is FlxVirtualPad) return cast(th, FlxVirtualPad);
+	return null;
+	}
+    
 	public var skipButtonUpdate(default, set):Bool;
 
 	private function set_skipButtonUpdate(b:Bool):Bool
@@ -57,7 +63,6 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	private var _selectedLabel:String;
 
 	private var currentScroll:Int = 0; //Handles the scrolling
-
 	public var canScroll:Bool = true;
 
 	private function get_selectedId():String
@@ -367,7 +372,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 
 		t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
 			Std.int(header.background.height), [[1, 1, 3, 3], [1, 1, 3, 3], [1, 1, 3, 3]], FlxUI9SliceSprite.TILE_NONE);
-		t.labelOffsets[FlxButton.PRESSED].y -= 1; // turn off the 1-pixel depress on click
+		t.labelOffsets[FlxButtonState.PRESSED].y -= 1; // turn off the 1-pixel depress on click
 
 		t.up_color = FlxColor.BLACK;
 		t.over_color = FlxColor.WHITE;
@@ -436,7 +441,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		#if FLX_MOUSE
 		if (dropPanel.visible)
 		{
-			#if android
+			#if mobile //thanks gamerbross -saw
 			if(list.length > 1 && canScroll) 
 			{
 				for (swipe in FlxG.swipes)
@@ -445,14 +450,14 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 					var g = swipe.startPosition.y - swipe.endPosition.y;
 					if (25 <= Math.sqrt(f * f + g * g))
 					{
-						if ((-45 <= swipe.startPosition.angleBetween(swipe.endPosition) && 45 >= swipe.startPosition.angleBetween(swipe.endPosition)))
+						if ((-45 <= swipe.startPosition.degreesTo(swipe.endPosition) && 45 >= swipe.startPosition.degreesTo(swipe.endPosition)) #if mobile || getVirtualPad().buttonCEDown_M.pressed #end || FlxG.mouse.wheel > 0 || FlxG.keys.justPressed.UP)
 						{
 							// Go down
 							currentScroll++;
 							if(currentScroll >= list.length) currentScroll = list.length-1;
 							updateButtonPositions();
 						}
-						else if (-180 <= swipe.startPosition.angleBetween(swipe.endPosition) && -135 >= swipe.startPosition.angleBetween(swipe.endPosition) || (135 <= swipe.startPosition.angleBetween(swipe.endPosition) && 180 >= swipe.startPosition.angleBetween(swipe.endPosition)))
+						else if (-180 <= swipe.startPosition.degreesTo(swipe.endPosition) && -135 >= swipe.startPosition.degreesTo(swipe.endPosition) || (135 <= swipe.startPosition.degreesTo(swipe.endPosition) && 180 >= swipe.startPosition.degreesTo(swipe.endPosition)) #if mobile || getVirtualPad().buttonCEDown_M.pressed #end || FlxG.mouse.wheel < 0 || FlxG.keys.justPressed.DOWN)
 						{
 							// Go up
 							--currentScroll;
@@ -465,7 +470,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			#else
 			if(list.length > 1 && canScroll) 
 			{
-				if(FlxG.mouse.wheel > 0 || FlxG.keys.justPressed.UP) 
+				if(FlxG.mouse.wheel > 0 || FlxG.keys.justPressed.UP ) 
 				{
 					// Go up
 					--currentScroll;
@@ -481,7 +486,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				}
 			}
 
-			if (FlxG.mouse.justPressed && !mouseOverlapping())
+			if (FlxG.mouse.justPressed && !FlxG.mouse.overlaps(this))
 			{
 				showList(false);
 			}
@@ -489,19 +494,6 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 		#end
 	}
-
-	function mouseOverlapping()
-	{
-		var mousePoint = FlxG.mouse.getScreenPosition(camera);
-		var objPoint = this.getScreenPosition(null, camera);
-		if(mousePoint.x >= objPoint.x && mousePoint.y >= objPoint.y &&
-			mousePoint.x < objPoint.x + this.width && mousePoint.y < objPoint.y + this.height)
-		{
-			return true;
-		}
-		return false;
-	}
-
 	override public function destroy():Void
 	{
 		super.destroy();

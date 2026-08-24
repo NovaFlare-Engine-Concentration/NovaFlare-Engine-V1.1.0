@@ -2,7 +2,7 @@ package lime.utils;
 
 import openfl.Lib;
 /*
-#if android
+#if mobile
 import android.widget.Toast;
 #end
 */

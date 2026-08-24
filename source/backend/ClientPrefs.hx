@@ -33,6 +33,9 @@ class SaveVariables {
 	public var shaders:Bool = true;
 	public var cacheOnGPU:Bool = #if !switch false #else true #end; //From Stilic
 	public var framerate:Int = 60;
+	public var drawFramerate:Int = 120;
+	public var lockRender:Bool = false;
+	public var renderThread:Bool = true;
 	public var CustomFade:String = 'Move';
 	public var CustomFadeSound:Float = 0.5;
 	public var CustomFadeText:Bool = true;
@@ -221,12 +224,24 @@ class ClientPrefs {
 		FlxG.autoPause = ClientPrefs.data.autoPause;
 		#end
 
-		if(data.framerate > FlxG.drawFramerate) {
-			FlxG.updateFramerate = data.framerate;
-			FlxG.drawFramerate = data.framerate;
-		} else {
-			FlxG.drawFramerate = data.framerate;
-			FlxG.updateFramerate = data.framerate;
+		if(ClientPrefs.data.framerate > 0) {
+			if(ClientPrefs.data.framerate > FlxG.drawFramerate) {
+				FlxG.updateFramerate = ClientPrefs.data.framerate;
+				FlxG.drawFramerate = ClientPrefs.data.framerate;
+			} else {
+				FlxG.drawFramerate = ClientPrefs.data.framerate;
+				FlxG.updateFramerate = ClientPrefs.data.framerate;
+			}
+		}
+
+		if (ClientPrefs.data.drawFramerate > 0) {
+			FlxG.drawFramerate = ClientPrefs.data.drawFramerate;
+		}
+		if (ClientPrefs.data.lockRender) {
+			FlxG.stage.application.window.lockRender = ClientPrefs.data.lockRender;
+		}
+		if (ClientPrefs.data.renderThread) {
+			lime.graphics.opengl.GL.setMultiThreaded(ClientPrefs.data.renderThread);
 		}
 
 		if(FlxG.save.data.gameplaySettings != null) {
